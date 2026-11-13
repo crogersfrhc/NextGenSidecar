@@ -200,7 +200,10 @@
     var reset = $('ng-state-reset');
     if (reset) reset.addEventListener('click', function () { apply('profile'); });
     // ?state=<key> deep-links a state (used by screenshots and reviews).
-    var q = new URLSearchParams(window.location.search).get('state');
+    // (#<key> also works: the hosted static build cannot pass a query string.)
+    var q = new URLSearchParams(window.location.search).get('state') ||
+      (window.location.hash ? window.location.hash.slice(1) : '');
+    if (q && !STATES.some(function (s) { return s.key === q; })) q = '';
     if (q) {
       var tries = 0;
       (function wait() {

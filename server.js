@@ -974,7 +974,7 @@ export function createAthenaEmbedApp(overrides = {}) {
   // sample, labelled "Sample data — not a real patient." With it off the tab
   // shows the pinned live patient or its honest empty state, and
   // ?medicaidSample is ignored.
-  const medicaidRenewalSamplesOn = process.env.MEDICAID_RENEWAL_SAMPLE_DATA === '1';
+  const medicaidRenewalSamplesOn = process.env.MEDICAID_RENEWAL_SAMPLE_DATA !== '0' // NextGen prototype: sample data on by default;
   const medicaidRenewalEnv = overrides.medicaidRenewalEnv || {
     hasuraOrigin: process.env.HASURA_ORIGIN || 'https://test.frontrunnerhc.ai',
     clientId: process.env.MEDICAID_RENEWAL_CLIENT_ID || '',

@@ -146,3 +146,5 @@ ATHENA_EMBED_PORT=8100 node server.js
 # open http://localhost:8100/       (patient view)
 # open http://localhost:8100/?state=not-linked   (any §13 state)
 ```
+
+Hosted, server-free copy: `node scripts/build-static.mjs` (server running) writes `dist/`, which is published as the clickable prototype artifact. A fetch shim answers the app's `/api` calls in the browser; `#<state-key>` deep-links a state.
