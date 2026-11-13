@@ -2492,3 +2492,27 @@ h3.mr-cp-current-title {
     width: 100%;
   }
 }
+
+/* ---- NextGen: PRD §13 experience states (nextgenStates.js) ---------------- */
+.demo-states { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.demo-states .muted { color: rgba(255, 255, 255, 0.75); }
+.ng-select { font: inherit; font-size: 13px; padding: 6px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.5); min-width: 260px; }
+.ng-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+.ng-banner .ng-actions { justify-content: flex-start; margin-top: 10px; }
+.ng-banner { border: 1px solid var(--platform-card-border); border-left-width: 4px; border-radius: var(--radius); padding: 12px 16px; margin: 4px 0 12px; background: var(--surface); }
+.ng-tone-ok { border-left-color: #16a34a; background: #f0fdf4; }
+.ng-tone-warn { border-left-color: #d97706; background: #fffbeb; }
+.ng-tone-bad { border-left-color: #dc2626; background: #fef2f2; }
+.ng-tone-neutral { border-left-color: #64748b; background: #f8fafc; }
+.ng-banner-kind { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #64748b; margin-bottom: 2px; }
+.ng-banner-title { font-weight: 600; color: var(--text-strong); display: flex; align-items: center; gap: 8px; }
+.ng-banner-body { font-size: 13px; color: #475569; margin-top: 2px; }
+.ng-spinner-sm { width: 14px; height: 14px; border-width: 2px; margin: 0; }
+.ng-pair-form { display: grid; grid-template-columns: 1fr auto; gap: 10px 8px; align-items: end; max-width: 380px; margin: 18px auto 0; text-align: left; }
+.ng-pair-label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 500; color: var(--text-strong); }
+.ng-input { font: inherit; font-size: 14px; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; min-height: 40px; }
+.ng-code { letter-spacing: 0.3em; font-variant-numeric: tabular-nums; }
+.ng-pair-msg { margin-top: 12px !important; min-height: 1.2em; }
+.ng-pair-help { margin-top: 8px !important; font-size: 12px; }
+.ng-btn-secondary { background: #fff; color: var(--text-strong); border: 1px solid #cbd5e1; min-height: 40px; }
+.ng-btn-secondary:hover { background: #f1f5f9; border-color: #94a3b8; }

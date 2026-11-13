@@ -130,7 +130,7 @@
           .then(function (body) {
             var code = body && body.error;
             if (code === 'session_required' || code === 'session_unknown') {
-              throw new Error('Session expired \u2014 relaunch the app from athenaOne.');
+              throw new Error('Session expired \u2014 relaunch the app from NextGen.');
             }
             throw new Error(body && body.message ? body.message : 'Not authenticated (HTTP 401).');
           });
@@ -1070,7 +1070,7 @@
       try { fn(); } catch (err) {
         // One bad closer must not strand the remaining modals open.
         // eslint-disable-next-line no-console
-        console.warn('[athena-embed] modal force-close failed', err);
+        console.warn('[NextGen-embed] modal force-close failed', err);
       }
     });
   }
@@ -1408,7 +1408,7 @@
     });
     if (diffCount) {
       var summary = el('span', 'cmp-diff-summary',
-        diffCount + (diffCount === 1 ? ' field differs' : ' fields differ') + ' from athena');
+        diffCount + (diffCount === 1 ? ' field differs' : ' fields differ') + ' from NextGen');
       css(summary, { fontSize: '12px', fontWeight: '700', color: THEME.amber });
       bar.appendChild(summary);
       var toggleWrap = document.createElement('label');
@@ -1431,7 +1431,7 @@
     } else {
       // Zero-diff tab: all rows stay visible plus this muted line — never an
       // empty panel, and no pointless toggle.
-      var noDiff = el('span', 'cmp-nodiff', 'No differences \u2014 athena matches FrontRunner');
+      var noDiff = el('span', 'cmp-nodiff', 'No differences \u2014 NextGen matches FrontRunner');
       css(noDiff, { fontSize: '12px', fontStyle: 'italic', color: THEME.slate500 });
       bar.appendChild(noDiff);
     }
@@ -1454,11 +1454,11 @@
       // column now called "athena", "Existing = live athena values" would both
       // point at a heading that no longer exists and say athena twice.
       if (srcMeta.source === 'orion') {
-        srcText = 'athena = live values (via Orion)';
+        srcText = 'NextGen = live values (via Orion)';
       } else if (srcMeta.source === 'unavailable') {
-        srcText = 'athena values unavailable — ' + (srcMeta.error && srcMeta.error.message ? srcMeta.error.message : 'live athena read failed');
+        srcText = 'NextGen values unavailable — ' + (srcMeta.error && srcMeta.error.message ? srcMeta.error.message : 'live NextGen read failed');
       } else {
-        srcText = 'athena = simulated values (live lane not configured)';
+        srcText = 'NextGen = simulated values (live lane not configured)';
       }
       var srcNote = el('div', 'cmp-existing-source', srcText);
       css(srcNote, {
@@ -1496,7 +1496,7 @@
     // deliberate and product-chosen (Craig, 2026-08-12): "FrontRunner", and
     // "athena" lower-case, which is how athenahealth styles its own product
     // name. An uppercase transform here would silently override it.
-    ['', 'FrontRunner', 'athena', 'Custom'].forEach(function (t, i) {
+    ['', 'FrontRunner', 'NextGen', 'Custom'].forEach(function (t, i) {
       var c = document.createElement('div');
       css(c, { minWidth: '0' });
       var title = el('div', null, t);
@@ -2345,7 +2345,7 @@
   // tip so they can never disagree.
   function appointmentsSourceStamp() {
     return appointmentsRefreshedFromAthena
-      ? 'Live from athena \u00B7 retrieved ' + fmtRunDate(rtvToday())
+      ? 'Live from NextGen \u00B7 retrieved ' + fmtRunDate(rtvToday())
       : 'Nightly dataview \u00B7 as of ' + fmtRunDate(apptDataviewAsOf());
   }
 
@@ -2395,7 +2395,7 @@
 
     card.appendChild(el('h2', null, 'Appointments'));
     card.appendChild(el('p', 'card-sub',
-      'Patient schedule from athena \u2014 nightly dataview feed with on-demand live refresh'));
+      'Patient schedule from NextGen \u2014 nightly dataview feed with on-demand live refresh'));
 
     // Freshness stamp + the Refresh action.
     var srcRow = el('div');
@@ -2407,7 +2407,7 @@
     css(stamp, { fontSize: '12px', color: THEME.slate500 });
     var refreshBtn = el('button');
     refreshBtn.type = 'button';
-    refreshBtn.textContent = 'Refresh from athena';
+    refreshBtn.textContent = 'Refresh from NextGen';
     css(refreshBtn, {
       background: THEME.navy, color: '#fff', border: '1px solid ' + THEME.navy,
       borderRadius: '8px', padding: '6px 12px', fontSize: '12px', fontWeight: '600',
@@ -2610,7 +2610,7 @@
     var body = el('div');
     css(body, { flex: '1', minHeight: '0', overflowY: 'auto', padding: '20px', background: '#ffffff' });
 
-    var loading = el('div', null, 'Retrieving appointment from athena\u2026');
+    var loading = el('div', null, 'Retrieving appointment from NextGen\u2026');
     css(loading, { fontSize: '13px', color: THEME.slate500, fontStyle: 'italic', padding: '10px 0' });
     body.appendChild(loading);
 
@@ -2710,7 +2710,7 @@
       body.appendChild(insWrap);
 
       // --- 4. The modal's OWN freshness line — the detail was fetched live ---
-      var fresh = el('div', null, 'Retrieved live from athena \u00B7 ' + fmtRunDate(rtvToday()));
+      var fresh = el('div', null, 'Retrieved live from NextGen \u00B7 ' + fmtRunDate(rtvToday()));
       css(fresh, { marginTop: '20px', fontSize: '12px', color: THEME.slate500 });
       body.appendChild(fresh);
     }
@@ -3124,7 +3124,7 @@
           var why = el('div', null,
             'Field edits to a policy already on file reach future appointments on their own, because an ' +
             'appointment stores a POINTER to the policy rather than a copy of it. A newly created policy is ' +
-            'applied by athena itself (the create carries updateappointments). Only changing WHICH policy is ' +
+            'applied by NextGen itself (the create carries updateappointments). Only changing WHICH policy is ' +
             'primary vs secondary needs a per-appointment update — add or move a policy to see that here.');
           css(why, { fontSize: '12px', color: THEME.slate500, lineHeight: '1.5' });
           panel.appendChild(why);
@@ -4027,7 +4027,7 @@
         // cap-at-2; the API contract's `400 insurance_cap_exceeded`) — the D2 hold
         // is lifted, see the ruling block above.
         var demoteReason = otherOccupant
-          ? 'not available, ' + otherOccupant + ' already holds the ' + other + ' rank and athena accepts at most two policies'
+          ? 'not available, ' + otherOccupant + ' already holds the ' + other + ' rank and NextGen allows one policy per rank'
           : null;
         dispWrap.appendChild(dispositionChoice(
           'demote',
@@ -4179,10 +4179,10 @@
           rankLabel(rank) + ' Insurance',
           defs,
           replacing
-            ? 'New policy: ' + newPayer + ' — replaces ' + occupant + '. The policy on file is cancelled and this one created in its place. Athena assigns the insurance ID on create.'
+            ? 'New policy: ' + newPayer + ' — replaces ' + occupant + '. The policy on file is cancelled and this one created in its place. NextGen assigns the insurance ID on create.'
             : demoting
-              ? 'New ' + rankLabel(rank).toLowerCase() + ' policy: ' + newPayer + ' — created in athena, which applies it to future appointments itself. ' + occupant + ' keeps its own record and moves to ' + otherRank + ' on the appointments you select.'
-              : 'New policy: ' + newPayer + ' — Not yet on file in athena; every value below posts as a new policy. Athena assigns the insurance ID on create.',
+              ? 'New ' + rankLabel(rank).toLowerCase() + ' policy: ' + newPayer + ' — created in NextGen, which applies it to future appointments itself. ' + occupant + ' keeps its own record and moves to ' + otherRank + ' on the appointments you select.'
+              : 'New policy: ' + newPayer + ' — Not yet on file in NextGen; every value below posts as a new policy. NextGen assigns the insurance ID on create.',
           newPayer
         );
         showInsuranceAddedBanner(
@@ -4190,7 +4190,7 @@
             ? rankLabel(rank) + ' insurance replaced — review the values below, then Submit to cancel ' + occupant + ' and create the new policy.'
             : demoting
               ? rankLabel(rank) + ' insurance added and ' + occupant + ' moves to ' + otherRank + ' — pick the future appointments to re-point on the Appointments tab, then Submit.'
-              : rankLabel(rank) + ' insurance added — review the values below, then Submit to create it in athena.'
+              : rankLabel(rank) + ' insurance added — review the values below, then Submit to create it in NextGen.'
         );
         // The Appointments tab renders from plannedRepoint, so it has to be
         // rebuilt now that a re-point exists.
@@ -4475,7 +4475,7 @@
       // side effects onto the new patient.
       var runPatient = currentPatient;
       // eslint-disable-next-line no-console
-      console.log('[athena-embed] Post Data run', {
+      console.log('[NextGen-embed] Post Data run', {
         source: source,
         athenaPatientId: runPatientId,
         profilePatientId: currentPatient && currentPatient.id,
@@ -4496,7 +4496,7 @@
 
       // --- Phase 2 view: rebuild the body in place (25D pattern) ---
       while (body.firstChild) body.removeChild(body.firstChild);
-      var phaseHead = el('div', null, 'Posting to athena');
+      var phaseHead = el('div', null, 'Posting to NextGen');
       css(phaseHead, {
         fontSize: '12px', fontWeight: '700', color: THEME.slate500,
         textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px',
@@ -4621,7 +4621,7 @@
                 ATHENA_POSTED_OVERRIDES[f.tab + '|' + f.field] = f.value;
               });
               updatesPosted += wiredDeltas.length;
-              var label = 'Posted ' + wiredDeltas.length + ' to athena';
+              var label = 'Posted ' + wiredDeltas.length + ' to NextGen';
               if (unwired > 0) label += ' · ' + unwired + ' not wired for live posting';
               setRunResultState(item.resultEl, 'updated', label);
             } else {
@@ -4764,7 +4764,7 @@
               // simulate here — that would fake an athena reflection while
               // live mode is on.
               setRunResultState(item.resultEl, 'uncertain',
-                'Not posted — no usable athena package id (demo placeholder)');
+                'Not posted — no usable NextGen package id (demo placeholder)');
               done();
               return;
             }
@@ -4774,13 +4774,13 @@
               var failedOp = ops.some(function (o) { return o && o.outcome === 'failed'; });
               if (uncertainOp) {
                 setRunResultState(item.resultEl, 'uncertain',
-                  'Uncertain at athena — may or may not have applied; reconcile, do not re-post');
+                  'Uncertain at NextGen — may or may not have applied; reconcile, do not re-post');
                 insuranceChangedManually = true; // coverage MAY have changed — recommend re-verify
                 done();
                 return;
               }
               if (failedOp) {
-                setRunResultState(item.resultEl, 'failed', 'Failed at athena — see operations');
+                setRunResultState(item.resultEl, 'failed', 'Failed at NextGen — see operations');
                 done();
                 return;
               }
@@ -4789,7 +4789,7 @@
               });
               insuranceChangedManually = true;
               updatesPosted += wiredDeltas.length;
-              var label = 'Posted ' + wiredDeltas.length + ' to athena';
+              var label = 'Posted ' + wiredDeltas.length + ' to NextGen';
               if (unwired > 0) label += ' · ' + unwired + ' not wired for live posting';
               setRunResultState(item.resultEl, 'updated', label);
             } else {
@@ -4870,7 +4870,7 @@
           border: '1px solid rgba(22,163,74,0.35)', borderRadius: '6px', padding: '7px 10px',
         });
         // R-24: nothing pushes synchronously into the athena UI.
-        var r24 = el('div', null, 'Posted via FrontRunner. Changes appear in athenaOne after a manual refresh there.');
+        var r24 = el('div', null, 'Posted via FrontRunner. Changes appear in NextGen after a manual refresh there.');
         css(r24, { fontSize: '12px', color: THEME.slate500, fontStyle: 'italic', marginTop: '10px' });
         body.appendChild(r24);
         // Posted-stamp — surfaces in the review phase on later opens.
@@ -5013,10 +5013,12 @@
         { key: 'demographic', label: 'Demographic', defs: buildDemographicDefs(p) },
         { key: 'primary', label: 'Primary Insurance', defs: buildInsuranceDefs(p, 'primary'), payer: (p.insurance && p.insurance.primary && p.insurance.primary.payer) || null },
         { key: 'secondary', label: 'Secondary Insurance', defs: buildInsuranceDefs(p, 'secondary'), payer: (p.insurance && p.insurance.secondary && p.insurance.secondary.payer) || null },
-        // 26B: restored — the one-stop modal also applies the insurance
-        // updates to appointments (shared 25D engine).
-        buildAppointmentsPostTabDef(),
-      ],
+        // NextGen: N-level coverage — Tertiary gets its own tab when present.
+      ].concat(p.insurance && p.insurance.tertiary ? [
+        { key: 'tertiary', label: 'Tertiary Insurance', defs: buildInsuranceDefs(p, 'tertiary'), payer: p.insurance.tertiary.payer || null },
+      ] : []).concat([
+        // NextGen: no appointment reads, so no Appointments tab in Post Data.
+      ]),
       initialTab: initialTab || 'demographic',
     }));
   }
@@ -5114,7 +5116,7 @@
     {
       key: 'discovery', icon: '\uD83D\uDD0D', name: 'Insurance Discovery', short: 'Insurance Discovery',
       desc: 'Search for active coverage across carriers',
-      result: '2 active policies found \u2014 Blue Cross Blue Shield of Texas (Primary), Aetna (Secondary). No additional coverage identified.',
+      result: '3 active policies found \u2014 Blue Cross Blue Shield of Texas (Primary), Aetna (Secondary), Texas Medicaid (Tertiary). No additional coverage identified.',
     },
     {
       key: 'eligibility', icon: '\uD83D\uDEE1\uFE0F', name: 'Eligibility (270/271)', short: 'Eligibility',
@@ -7320,7 +7322,7 @@
       // recorded state for the pre-seeded row too (27D-b rule, carried over).
       deliveries: [
         { channel: 'frontrunner-portal', at: '2026-06-03', note: 'GFE posted to the patient\u2019s FrontRunner Patient Portal inbox (simulated \u2014 the embed has no portal write lane).' },
-        { channel: 'athena-chart', at: '2026-06-03', appointmentId: 'APT-88843', simulated: true, note: 'athenaNet chart attach \u2014 appointment APT-88843 (simulated \u2014 no callable athena document lane exists; request shape unverified).' },
+        { channel: 'athena-chart', at: '2026-06-03', appointmentId: 'APT-88843', simulated: true, note: 'NextGen chart attach \u2014 appointment APT-88843 (simulated \u2014 no callable NextGen document lane exists; request shape unverified).' },
       ],
       department: 'Internal Medicine',
       lastActivity: '2026-06-03',
@@ -7533,9 +7535,9 @@
       var apptId = gfeCurrentAppointmentId(p);
       estm.deliveries.push({
         channel: 'athena-chart', at: rtvToday(), appointmentId: apptId, simulated: true,
-        note: 'athenaNet chart attach' +
+        note: 'NextGen chart attach' +
           (apptId ? ' \u2014 appointment ' + apptId : ' \u2014 no appointment resolved from the launch encounter') +
-          ' (simulated \u2014 no callable athena document lane exists; request shape unverified).',
+          ' (simulated \u2014 no callable NextGen document lane exists; request shape unverified).',
       });
     }
   }
@@ -8054,7 +8056,7 @@
             borderRadius: '8px', background: THEME.inset, border: '1px solid ' + THEME.borderInput,
           });
           var head = el('div', null,
-            (d.channel === 'athena-chart' ? 'athenaNet chart (simulated)' : 'FrontRunner Patient Portal') +
+            (d.channel === 'athena-chart' ? 'NextGen chart (simulated)' : 'FrontRunner Patient Portal') +
             (d.at ? ' \u00B7 ' + d.at : ''));
           css(head, { fontSize: '12px', fontWeight: '700', color: THEME.slate900 });
           row.appendChild(head);
@@ -8318,7 +8320,7 @@
         }
         payerWrap.appendChild(boxEl);
         var hint = el('div', null,
-          'Seeded from the patient\u2019s athena coverage. Defaults to in-network (direct) pricing when no payer is set.');
+          'Seeded from the patient\u2019s NextGen coverage. Defaults to in-network (direct) pricing when no payer is set.');
         css(hint, { fontSize: '12px', color: THEME.slate500, lineHeight: '1.4' });
         payerWrap.appendChild(hint);
       }
@@ -8579,9 +8581,9 @@
       delText.appendChild(delLabel);
       var apptId = gfeCurrentAppointmentId(p);
       var delSub = el('div', null,
-        'Posts the GFE PDF to the patient\u2019s FrontRunner Patient Portal inbox, and attaches the GFE document to the patient\u2019s athenaNet chart' +
+        'Posts the GFE PDF to the patient\u2019s FrontRunner Patient Portal inbox, and attaches the GFE document to the patient\u2019s NextGen chart' +
         (apptId ? ' (appointment ' + apptId + ')' : '') +
-        ' \u2014 chart attach simulated: no callable athena document lane exists yet.');
+        ' \u2014 chart attach simulated: no callable NextGen document lane exists yet.');
       css(delSub, { fontSize: '12px', color: THEME.slate500, lineHeight: '1.45' });
       delText.appendChild(delSub);
       delRow.appendChild(delText);
@@ -10847,14 +10849,14 @@
       // Stale-response guard: a patient switch or a newer retry wins.
       if (fcState !== state || state.requestSeq !== seq) return;
       if (envelope.status === 'error' && envelope.error) {
-        console.warn('[athena-embed] Financial clearance read failed: ' + envelope.error.code);
+        console.warn('[NextGen-embed] Financial clearance read failed: ' + envelope.error.code);
       }
       state.envelope = envelope;
       state.loading = false;
       fcRefreshViews();
     }).catch(function (err) {
       if (fcState !== state || state.requestSeq !== seq) return;
-      console.warn('[athena-embed] Financial clearance request failed: ' + (err && err.message ? err.message : err));
+      console.warn('[NextGen-embed] Financial clearance request failed: ' + (err && err.message ? err.message : err));
       state.envelope = { status: 'error', source: 'transport', clearance: null };
       state.loading = false;
       fcRefreshViews();
@@ -10876,7 +10878,7 @@
       state.running = false;
       if (!r.ok || !r.body || r.body.ran !== true) {
         var code = (r.body && r.body.code) || ('HTTP ' + r.status);
-        console.warn('[athena-embed] Financial clearance run failed: ' + code + (r.body && r.body.requestId ? ' (requestId ' + r.body.requestId + ')' : ''));
+        console.warn('[NextGen-embed] Financial clearance run failed: ' + code + (r.body && r.body.requestId ? ' (requestId ' + r.body.requestId + ')' : ''));
         state.runError = code === 'module_inactive'
           ? 'Financial Clearance isn’t active for this client.'
           : 'Clearance didn’t run. Try again.';
@@ -10889,7 +10891,7 @@
       fcRefreshViews();
     }).catch(function (err) {
       if (fcState !== state) return;
-      console.warn('[athena-embed] Financial clearance run request failed: ' + (err && err.message ? err.message : err));
+      console.warn('[NextGen-embed] Financial clearance run request failed: ' + (err && err.message ? err.message : err));
       state.running = false;
       state.runError = 'Clearance didn’t run. Try again.';
       fcRefreshViews();
@@ -11021,7 +11023,7 @@
     head.appendChild(el('span', 'badge badge-neutral', 'View only'));
     section.appendChild(head);
     if (env && env.identity && env.identity.kind === 'pinned') {
-      section.appendChild(el('p', 'fc-identity muted', 'FrontRunner record: staging test patient #' + env.identity.patientId + ' (no athena patient link yet)'));
+      section.appendChild(el('p', 'fc-identity muted', 'FrontRunner record: staging test patient #' + env.identity.patientId + ' (no NextGen patient link yet)'));
     }
     var dl = el('dl', 'fc-rows');
     dl.appendChild(fcRow('Qualifying tier', fcTierPill(c.tier)));
@@ -11241,7 +11243,7 @@
       if (mrState !== state || state.requestSeq !== seq) return;
       if (envelope.status === 'error' && envelope.error) {
         // Technical detail goes to the console, never the UI copy.
-        console.warn('[athena-embed] Medicaid Renewal read failed: ' + envelope.error.code);
+        console.warn('[NextGen-embed] Medicaid Renewal read failed: ' + envelope.error.code);
       }
       state.envelope = envelope;
       state.loading = false;
@@ -11249,7 +11251,7 @@
       mrRender();
     }).catch(function (err) {
       if (mrState !== state || state.requestSeq !== seq) return;
-      console.warn('[athena-embed] Medicaid Renewal request failed: ' + (err && err.message ? err.message : err));
+      console.warn('[NextGen-embed] Medicaid Renewal request failed: ' + (err && err.message ? err.message : err));
       state.envelope = { status: 'error', source: 'transport', renewal: null };
       state.loading = false;
       state.screeningRetrying = false;
@@ -11513,7 +11515,7 @@
 
     if (identity.kind === 'pinned') {
       body.appendChild(el('p', 'mr-footnote',
-        'Staging test patient (set on the server) — not matched to this athena patient.'));
+        'Staging test patient (set on the server) — not matched to this NextGen patient.'));
     }
 
     modal.appendChild(body);
@@ -11804,13 +11806,13 @@
       } else {
         s.phase = 'error';
         s.error = (out && out.error) || { code: 'unknown' };
-        console.warn('[athena-embed] Medicaid Renewal ' + s.action + ' not saved: ' + s.error.code);
+        console.warn('[NextGen-embed] Medicaid Renewal ' + s.action + ' not saved: ' + s.error.code);
       }
       mrRender();
       mrFocus(s.phase === 'saved' ? 'mr-save-status' : 'mr-save-retry');
     }).catch(function (err) {
       if (mrState !== state || state.save !== s) return;
-      console.warn('[athena-embed] Medicaid Renewal ' + s.action + ' request failed: ' + (err && err.message ? err.message : err));
+      console.warn('[NextGen-embed] Medicaid Renewal ' + s.action + ' request failed: ' + (err && err.message ? err.message : err));
       s.phase = 'error';
       s.error = { code: 'transport' };
       mrRender();
@@ -13110,7 +13112,7 @@
           // "now showing athena Patient #<id>" — never the mock name/MRN.
           if (isPatientSwitch && currentPatient) {
             if (isAthenaSourceContext(context)) {
-              showPatientContextNotice('athena Patient #' + context.patientId, null);
+              showPatientContextNotice('NextGen Patient #' + context.patientId, null);
             } else {
               showPatientContextNotice(currentPatient.name.full, bareMrn(currentPatient.mrn));
             }
@@ -13164,7 +13166,7 @@
           window.location.pathname + (scrubbedQuery ? '?' + scrubbedQuery : '') + window.location.hash;
         window.history.replaceState(null, '', scrubbedUrl);
       } catch (e) {
-        console.warn('[athena-embed] could not scrub session param from URL: ' + (e && e.message ? e.message : e));
+        console.warn('[NextGen-embed] could not scrub session param from URL: ' + (e && e.message ? e.message : e));
       }
     }
 
@@ -13183,7 +13185,7 @@
         window.AthenaMessaging.appResize(600);
         window.AthenaMessaging.appPopin();
       } catch (e) {
-        console.warn('[athena-embed] boot layout request failed: ' + (e && e.message ? e.message : e));
+        console.warn('[NextGen-embed] boot layout request failed: ' + (e && e.message ? e.message : e));
       }
     }
 

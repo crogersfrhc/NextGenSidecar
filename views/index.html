@@ -131,32 +131,16 @@
       <span class="badge badge-amber">Demo mode</span>
       <span class="muted">NextGen state switcher (demo only)</span>
     </div>
-    <div class="demo-buttons">
-      <button type="button" class="btn" data-method="notifyPatientDataChange">notifyPatientDataChange</button>
-      <button type="button" class="btn" data-method="appMinimize">appMinimize</button>
-      <button type="button" class="btn" data-method="appReopen">appReopen</button>
-      <button type="button" class="btn" data-method="appEnterFullscreen">appEnterFullscreen</button>
-      <button type="button" class="btn" data-method="appExitFullscreen">appExitFullscreen</button>
-      <button type="button" class="btn" data-method="appPopout">appPopout</button>
-      <button type="button" class="btn" data-method="appPopin">appPopin</button>
-      <button type="button" class="btn" data-method="appShowBadge" data-arg="3">appShowBadge</button>
-      <button type="button" class="btn" data-method="appShowBadgePersistent" data-arg="!">appShowBadgePersistent</button>
-      <button type="button" class="btn" data-method="appClearBadge">appClearBadge</button>
-      <button type="button" class="btn btn-danger" data-method="appClose">appClose</button>
-    </div>
-    <div class="demo-resize">
-      <span class="muted">appResize:</span>
-      <button type="button" class="btn btn-sm" data-width="100">100</button>
-      <button type="button" class="btn btn-sm" data-width="200">200</button>
-      <button type="button" class="btn btn-sm" data-width="400">400</button>
-      <button type="button" class="btn btn-sm" data-width="600">600</button>
-      <button type="button" class="btn btn-sm" data-width="800">800</button>
-      <button type="button" class="btn btn-sm" data-width="1000">1000</button>
+    <div class="demo-states">
+      <label for="ng-state-select" class="muted">Show state (PRD §13):</label>
+      <select id="ng-state-select" class="ng-select"></select>
+      <button type="button" class="btn btn-sm" id="ng-state-reset">Reset</button>
     </div>
     <output id="demo-output" class="demo-output"></output>
   </aside>
 
   <script src="/public/js/athenaMessaging.js"></script>
   <script src="/public/js/app.js"></script>
+  <script src="/public/js/nextgenStates.js"></script>
 </body>
 </html>
