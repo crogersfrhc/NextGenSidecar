@@ -1,0 +1,2494 @@
+/*
+ * FrontRunner-themed styling for the athenaOne embedded app.
+ *
+ * Visual language mirrors the main FrontRunner (FRHC) React app:
+ *   - brand navy (#284776) primary, teal (#3a7ca5) accent, orange (#F36E21)
+ *   - soft blue background gradient + navy header gradient
+ *   - neumorphic cards, slate text scale, semantic status-pill colors
+ *
+ * NOTE: the embedded app's CSP is `default-src 'self' *.athenahealth.com`,
+ * which blocks remote webfonts (e.g. Google Fonts, which the platform uses).
+ * Inter and Manrope are self-hosted under /public/fonts instead (@font-face
+ * below), with the platform's stacks: Inter body, Manrope 600 headings.
+ */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/public/fonts/inter-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/public/fonts/inter-latin-600-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/public/fonts/inter-latin-700-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/public/fonts/manrope-latin-600-normal.woff2") format("woff2");
+}
+
+:root {
+  /* ===== Platform theme layer (style alignment spec v2, 2026-10-21) =====
+     Values read from frhc-platform `website/client/src/index.css` (:root) and
+     `website/tailwind.config.ts` at development b3809e46, unless a comment
+     says "spec": those tokens are not in the reachable platform code and are
+     taken from the style spec (read from the running Replit platform). */
+
+  /* White-label brand pack (index.css `--brand-pack-*`). */
+  --brand-pack-key: "frhc";
+  --brand-pack-name: "FrontRunnerHC";
+  --brand-pack-primary: #284776;
+  --brand-pack-primary-light: #2d6a94;
+  --brand-pack-accent: #3a7ca5;
+  --brand-pack-accent-dark: #2d6a94;
+  --brand-pack-surface: #f6fafc;
+  --brand-pack-muted: #e8f0f5;
+  --brand-pack-border: #d7e6ee;
+  --brand-pack-ink: #284776;
+  --brand-pack-on-primary: #ffffff;
+
+  /* shadcn-style HSL channels: consume as hsl(var(--x)), as the platform does.
+     --muted-foreground is 43%, the platform value (punch list 2026-10-21; the
+     reachable GitHub index.css has 46.9%). On white it is 5.49:1; its lowest
+     ratio on a surface that carries text is 4.54:1 (violet column tint), so
+     muted text meets AA everywhere. --muted-strong is tailwind.config.ts
+     `muted-strong` (#475569) in HSL, kept for text on the #e8f0f5 wells. */
+  --background: 0 0% 100%;
+  --foreground: 220 14% 28%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 14% 28%;
+  --primary: 216 49% 31%;
+  --primary-foreground: 0 0% 100%;
+  --muted-foreground: 215.4 16.3% 43%;
+  --muted-strong: 215.3 19.3% 34.5%;
+  --accent: 204 43% 40%;
+  --accent-foreground: 0 0% 100%;
+  --ring: 216 49% 31%;
+  --radius: 0.5rem; /* 8px */
+
+  /* Status-pill tokens (index.css `--status-*`, HSL channels). */
+  --status-success-bg: 152 76% 90%;
+  --status-success-fg: 163 94% 24%;
+  --status-success-border: 149 80% 84%;
+  --status-warning-bg: 48 96% 89%;
+  --status-warning-fg: 26 90% 37%;
+  --status-warning-border: 48 97% 77%;
+  --status-destructive-bg: 0 93% 94%;
+  --status-destructive-fg: 0 74% 42%;
+  --status-destructive-border: 0 96% 89%;
+  --status-info-bg: 214 95% 93%;
+  --status-info-fg: 224 76% 48%;
+  --status-info-border: 213 97% 87%;
+  --status-caution-bg: 34 100% 92%;
+  --status-caution-fg: 21 90% 42%;
+  --status-caution-border: 32 98% 83%;
+  --status-neutral-bg: 210 40% 96%;
+  --status-neutral-fg: 215 25% 27%;
+  --status-neutral-border: 214 32% 91%;
+  --status-special-bg: 226 100% 94%;
+  --status-special-fg: 244 58% 51%;
+  --status-special-border: 228 96% 89%;
+
+  /* Category tokens (spec 2.7): Tailwind 100 / 700 / 200, as the spec's
+     violet and pink examples are. Not in the reachable platform code. pink-fg
+     is the spec's 335 78% 42%. Teal is added for the Medicaid Eligible column.
+     fg on bg: sky 5.17, violet 5.98, lime 4.60, fuchsia 5.43, cyan 4.79,
+     pink 5.13, stone 9.42, teal 4.86 to 1 (all AA). */
+  --category-sky-bg: 204 93.8% 93.7%;
+  --category-sky-fg: 201.3 96.3% 32.2%;
+  --category-sky-border: 200.6 94.4% 86.1%;
+  --category-violet-bg: 251 91% 95%;
+  --category-violet-fg: 263 70% 50%;
+  --category-violet-border: 251 95% 92%;
+  --category-lime-bg: 79.6 89.1% 89.2%;
+  --category-lime-fg: 85.9 78.4% 27.3%;
+  --category-lime-border: 80.9 88.5% 79.6%;
+  --category-fuchsia-bg: 287 100% 95.5%;
+  --category-fuchsia-fg: 294.7 72.4% 39.8%;
+  --category-fuchsia-border: 288.3 95.8% 90.6%;
+  --category-cyan-bg: 185.1 95.9% 90.4%;
+  --category-cyan-fg: 192.9 82.3% 31%;
+  --category-cyan-border: 186.2 93.5% 81.8%;
+  --category-pink-bg: 326 78% 95%;
+  --category-pink-fg: 335 78% 42%;
+  --category-pink-border: 326 85% 90%;
+  --category-stone-bg: 60 4.8% 95.9%;
+  --category-stone-fg: 30 6.3% 25.1%;
+  --category-stone-border: 20 5.9% 90%;
+  --category-teal-bg: 167.2 85.5% 89.2%;
+  --category-teal-fg: 175.3 77.4% 26.1%;
+  --category-teal-border: 168.4 83.8% 78.2%;
+
+  /* Data tokens (spec 2.7; not in the reachable platform code). */
+  --data-money: 203 48% 44%; /* 4.50:1 on white */
+  --data-negative: var(--status-destructive-fg);
+  --data-overdue: var(--status-destructive-fg);
+  --data-due-soon: var(--status-warning-fg);
+  --data-delta-up: var(--status-success-fg);
+  --data-id-bg: var(--status-neutral-bg);
+  --data-id-fg: var(--status-neutral-fg);
+  --data-id-border: var(--status-neutral-border);
+
+  /* Selected row (spec 2.3). The platform's own --selected-row-bg / -edge
+     are not in the reachable frhc-platform code (development, main and
+     replit/main), so these follow the fallback: the platform's --muted
+     background (index.css 210 40% 96.1%; the sidecar's own --muted is the
+     muted TEXT colour, so it is not reused here) and --primary for the edge.
+     Not consumed yet: the sidecar has no selectable rows. */
+  --selected-row-bg: hsl(210 40% 96.1%);
+  --selected-row-edge: hsl(var(--primary));
+
+  /* Background + header gradients (index.css). */
+  --bg-gradient-from: #f6fafc;
+  --bg-gradient-via: #ffffff;
+  --bg-gradient-to: #eef4f8;
+  --header-gradient-from: #233f6a;
+  --header-gradient-via: #284776;
+  --header-gradient-to: #2d5a8a;
+  --header-texture-image:
+    linear-gradient(
+      108deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.045) 18%,
+      rgba(255, 255, 255, 0.075) 32%,
+      rgba(255, 255, 255, 0.02) 46%,
+      transparent 58%,
+      rgba(255, 255, 255, 0.05) 74%,
+      rgba(255, 255, 255, 0.025) 86%,
+      transparent 100%
+    ),
+    linear-gradient(
+      96deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.025) 40%,
+      transparent 65%,
+      rgba(255, 255, 255, 0.04) 82%,
+      transparent 100%
+    );
+
+  /* Platform card shadow (spec 2.3): tailwind.config.ts `shadow-card` plus a
+     1px ring. Card border is the brand border at 20%. */
+  --platform-shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  --platform-card-border: rgba(215, 230, 238, 0.2);
+
+  /* Platform fonts (index.css body / h1-h6). Self-hosted under /public/fonts:
+     the embed CSP (default-src 'self') blocks the platform's Google Fonts. */
+  --font-body: "Inter", "Manrope", sans-serif;
+  --font-heading: "Manrope", "Inter", sans-serif;
+
+  /* ===== Legacy sidecar names, aliased to the platform layer ===== */
+  /* Brand palette */
+  --brand-primary: var(--brand-pack-primary);
+  --brand-primary-light: var(--brand-pack-primary-light);
+  --brand-accent: var(--brand-pack-accent);
+  --brand-accent-light: #4a8cb5;
+  --brand-orange: #f36e21;
+  --brand-surface: var(--brand-pack-surface);
+  --brand-muted: var(--brand-pack-muted);
+  --brand-border: var(--brand-pack-border);
+
+  /* Header gradient */
+  --header-from: var(--header-gradient-from);
+  --header-via: var(--header-gradient-via);
+  --header-to: var(--header-gradient-to);
+
+  /* Text: platform body slate for body and headings (spec 2.1). */
+  --text: hsl(var(--foreground));
+  --text-strong: hsl(var(--foreground));
+  --muted: hsl(var(--muted-foreground));
+  --muted-soft: hsl(var(--muted-foreground));
+  --muted-on-well: hsl(var(--muted-strong));
+
+  --surface: hsl(var(--card)); /* card / panel background */
+  --page-bg: var(--brand-pack-surface);
+  --inset-bg: #f8fafc; /* slate-50 inset (vitals, launch kv, code) */
+  --well-bg: var(--brand-pack-muted); /* filter / well areas (spec 2.3) */
+  --card-head-bg: rgba(40, 71, 118, 0.06); /* deepblue/6% card-header tint (platform CardHeader) */
+  --border: #e2e8f0; /* slate-200 = platform --border 214.3 31.8% 91.4% */
+  --border-soft: #e2e8f0;
+  --accent-line: hsl(var(--primary));
+  --accent-text: hsl(var(--primary));
+  --emphasis-text: hsl(var(--primary));
+  --card-hover-border: #60a5fa; /* blue-400 — card hover border */
+
+  /* Status pills */
+  --success-bg: hsl(var(--status-success-bg));
+  --success-fg: hsl(var(--status-success-fg));
+  --success-border: hsl(var(--status-success-border));
+  --warning-bg: hsl(var(--status-warning-bg));
+  --warning-fg: hsl(var(--status-warning-fg));
+  --warning-border: hsl(var(--status-warning-border));
+  --danger-bg: hsl(var(--status-destructive-bg));
+  --danger-fg: hsl(var(--status-destructive-fg));
+  --danger-border: hsl(var(--status-destructive-border));
+  --info-bg: hsl(var(--status-info-bg));
+  --info-fg: hsl(var(--status-info-fg));
+  --info-border: hsl(var(--status-info-border));
+
+  --radius-lg: 0.75rem; /* 12px */
+  --radius-sm: 0.375rem; /* 6px */
+
+  --shadow-card: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-card-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.10), 0 2px 4px -2px rgba(0, 0, 0, 0.10);
+  --shadow-header: 0 1px 3px rgba(0, 0, 0, 0.12);
+  /* Was `--ring` (a box-shadow); the platform's --ring is an HSL channel. */
+  --focus-ring: 0 0 0 3px rgba(40, 71, 118, 0.25);
+
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text);
+  background-color: var(--page-bg);
+  background-image: linear-gradient(135deg, #f6fafc 0%, #ffffff 55%, #eef4f8 100%);
+  background-attachment: fixed;
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+/* Controls stay at least 44px tall (touch target; platform .touch-target). */
+button,
+select,
+input:not([type='checkbox']):not([type='radio']):not([type='hidden']) {
+  min-height: 44px;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: var(--inset-bg);
+  color: var(--emphasis-text);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* ---------- Badges (semantic status pills) ----------
+   Platform tinted pill (Badge variants): bg / fg / border from one status
+   token. Chips may wrap to two lines. A leading icon is added with
+   .chip-icon-warn (the platform's AlertTriangle) or .chip-icon-check
+   (CheckCircle), by meaning, not colour. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: normal;
+  border: 1px solid transparent;
+}
+
+.chip-icon-warn::before,
+.chip-icon-check::before {
+  flex: none;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.chip-icon-warn::before {
+  content: "\26A0\FE0E" / "";
+}
+
+.chip-icon-check::before {
+  content: "\2713" / "";
+  font-weight: 700;
+}
+
+/* Platform tones the sidecar lacked (index.css caution / neutral / special).
+   Caution text uses orange-800 (6.38:1): the platform's caution fg is 3.96:1
+   on its own bg, under AA for 12px text. */
+.badge-caution {
+  background: hsl(var(--status-caution-bg));
+  color: #9a3412;
+  border-color: hsl(var(--status-caution-border));
+}
+
+.badge-neutral {
+  background: hsl(var(--status-neutral-bg));
+  color: hsl(var(--status-neutral-fg));
+  border-color: hsl(var(--status-neutral-border));
+}
+
+.badge-special {
+  background: hsl(var(--status-special-bg));
+  color: hsl(var(--status-special-fg));
+  border-color: hsl(var(--status-special-border));
+}
+
+.badge-green {
+  background: var(--success-bg);
+  color: var(--success-fg);
+  border-color: var(--success-border);
+}
+
+.badge-amber {
+  background: var(--warning-bg);
+  color: var(--warning-fg);
+  border-color: var(--warning-border);
+}
+
+.badge-blue {
+  background: var(--info-bg);
+  color: var(--info-fg);
+  border-color: var(--info-border);
+}
+
+/* ---------- Main + states ---------- */
+.app-main {
+  padding: 20px;
+  /* Step 11: constrain to the real athenaOne embed iframe width (~600px) so the
+     browser preview renders at true deployment size instead of filling a wide
+     window. Centered (margin auto), matching the rest of the layout. Everything
+     inside — patient banner, tab bar, readiness panel, single-column cards — then
+     lays out within this column. */
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.state-panel {
+  text-align: center;
+  padding: 64px 24px;
+  background: var(--surface);
+  border: 1px solid var(--platform-card-border);
+  border-radius: var(--radius);
+  box-shadow: var(--platform-shadow-card);
+}
+
+.state-panel h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-strong);
+  margin: 14px 0 8px;
+}
+
+.state-panel .muted {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.state-icon {
+  font-size: 40px;
+}
+
+.state-error h1 {
+  color: var(--danger-fg);
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto;
+  border: 4px solid var(--border);
+  border-top-color: var(--accent-line);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 1.6s;
+  }
+}
+
+/* ---------- Profile identity ---------- */
+.profile-identity {
+  display: flex;
+  align-items: center;
+  /* Wraps the two header buttons under the name on a narrow panel instead
+     of overflowing it. */
+  flex-wrap: wrap;
+  gap: 16px;
+  background-image: linear-gradient(100deg, var(--header-from) 0%, var(--header-via) 50%, var(--header-to) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+
+.profile-identity .identity-line h1 {
+  color: #ffffff;
+}
+
+.profile-identity .identity-meta {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.profile-identity .identity-meta strong {
+  color: #ffffff;
+}
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  flex: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
+.identity-text {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.identity-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.identity-line h1 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-strong);
+  margin: 0;
+}
+
+.identity-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  color: var(--muted);
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.identity-meta strong {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+/* MRN as the platform ID chip (data token: the neutral tone, 9.31:1). It is
+   the sidecar's only MRN, on the patient header above every tab; the
+   Medicaid Renewal envelope carries none. */
+.profile-identity .identity-meta strong#p-mrn {
+  display: inline-block;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--data-id-border));
+  background: hsl(var(--data-id-bg));
+  color: hsl(var(--data-id-fg));
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+/* ---------- Cards ---------- */
+.card-grid {
+  display: grid;
+  /* Step 8: always a single column — one card per row, full width, regardless of
+     viewport width (the wide browser view now matches the narrow athena iframe). */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+.card {
+  position: relative;
+  background: var(--surface);
+  /* Platform card (style spec 2.3): 8px radius, brand border at 20%, the
+     platform card shadow. */
+  border: 1px solid var(--platform-card-border);
+  border-radius: var(--radius);
+  box-shadow: var(--platform-shadow-card);
+  padding: 16px 18px;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: var(--platform-shadow-card);
+  border-color: var(--card-hover-border);
+  transform: translateY(-1px);
+}
+
+.card-wide {
+  grid-column: 1 / -1;
+}
+
+.card h2 {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted-soft);
+  margin: -16px -18px 14px;
+  padding: 12px 18px;
+  background: var(--card-head-bg);
+  border-bottom: 1px solid var(--border-soft);
+  border-radius: var(--radius) var(--radius) 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.card-sub {
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--muted-soft);
+}
+
+/* ---------- Step 8: collapsible cards ----------
+   Every card starts collapsed (only its header shows). The <h2> header is the
+   toggle (wired in app.js: role=button, tabindex, aria-expanded, Enter/Space).
+   The body (everything after the <h2>) is wrapped in .card-body and hidden when
+   the card carries .is-collapsed. Independent toggles — no accordion. */
+.card.is-collapsible > h2 {
+  /* The header now holds chevron + dot + title + key-status, all left-aligned
+     (the action button is absolutely positioned, so flex-start, not space-between). */
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.card.is-collapsible > h2:focus-visible {
+  outline: 2px solid var(--card-hover-border, #284776);
+  outline-offset: 2px;
+}
+
+/* Disclosure chevron — points right (▸) when collapsed, rotates to point down
+   when expanded. */
+.card-collapse-chevron {
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--muted-soft);
+  transition: transform 0.2s ease;
+}
+
+.card:not(.is-collapsed) > h2 .card-collapse-chevron {
+  transform: rotate(90deg);
+}
+
+/* Key live status shown in the collapsed header — muted/secondary so it reads as
+   status, not heading. Truncates rather than colliding in very narrow embeds. */
+.card-key-status {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--muted-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.card.is-collapsed > .card-body {
+  display: none;
+}
+
+/* When collapsed there is no body, so pull the header flush to the card's bottom
+   edge (cancel the card's 16px bottom padding) and round all four corners. */
+.card.is-collapsed > h2 {
+  margin-bottom: -16px;
+  border-bottom: none;
+  border-radius: var(--radius);
+}
+
+/* Cards with an always-visible summary strip (.card-collapse-keep children stay
+   outside .card-body — the Medicaid screening cards) still show content below
+   the header while collapsed, so keep the normal header seam instead of the
+   flush-collapsed one. */
+.card.is-collapsed.has-collapse-keep > h2 {
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border-soft);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+/* ---------- First-level collapsible card headers ----------
+   Light platform card header (punch list 2026-10-21): the platform keeps its
+   dark gradient banner for the page title only, which here is the patient
+   header card. Each top-level card in the four tabs (.card-grid .card) is a
+   white card (8px radius, platform card shadow, from .card) whose header is
+   the expand / collapse toggle: chevron, status dot, a Manrope 600 14px
+   title and the card's key status as a neutral chip. Collapsible rows
+   inside a card or modal (the Medicaid Renewal sections) are unchanged. */
+.card-grid > .card.is-collapsible > h2 {
+  position: relative;
+  min-height: 52px;
+  padding: 8px 18px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-strong);
+  background: var(--surface);
+  flex-wrap: wrap;
+  row-gap: 4px;
+}
+
+/* Room for the top-right action button, shown when the card is open. */
+.card-grid > .card.has-head-action:not(.is-collapsed) > h2 {
+  min-height: 64px;
+  padding-right: 136px;
+}
+
+/* Title chip: the platform neutral Badge tone (9.31:1). It may wrap to two
+   lines on a narrow panel. */
+.card-grid > .card.is-collapsible > h2 .card-key-status {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--status-neutral-border));
+  background: hsl(var(--status-neutral-bg));
+  color: hsl(var(--status-neutral-fg));
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: normal;
+  overflow: visible;
+}
+
+.card-grid > .card.is-collapsible > h2 .card-key-status:empty {
+  display: none;
+}
+
+/* ---------- Key/value rows ---------- */
+.kv {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.kv-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: baseline;
+}
+
+.kv-wide {
+  flex-direction: column;
+  gap: 2px;
+}
+
+.kv-label {
+  color: var(--muted-soft);
+  flex: none;
+  font-size: 13px;
+}
+
+.kv-value {
+  text-align: right;
+  font-weight: 600;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.kv-wide .kv-value {
+  text-align: left;
+}
+
+.kv-value.emphasis {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--emphasis-text);
+}
+
+.kv-divider {
+  height: 1px;
+  background: var(--border-soft);
+  margin: 8px 0;
+}
+
+/* ---------- Vitals ---------- */
+.vitals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(74px, 1fr));
+  gap: 10px;
+}
+
+.vital {
+  background: var(--inset-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 9px 8px;
+  text-align: center;
+}
+
+.vital-label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.vital-value {
+  display: block;
+  font-weight: 700;
+  color: var(--text-strong);
+  margin-top: 3px;
+}
+
+/* ---------- Data lists ---------- */
+.data-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pill-row,
+.alert-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.pill-row:last-child,
+.alert-row:last-child {
+  border-bottom: none;
+}
+
+.pill {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 999px;
+  flex: none;
+  border: 1px solid transparent;
+}
+
+.pill-danger {
+  background: var(--danger-bg);
+  color: var(--danger-fg);
+  border-color: var(--danger-border);
+}
+
+.pill-amber {
+  background: var(--warning-bg);
+  color: var(--warning-fg);
+  border-color: var(--warning-border);
+}
+
+.pill-main {
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.pill-sub {
+  color: var(--muted-soft);
+  font-size: 13px;
+}
+
+.alert-msg {
+  flex: 1;
+  color: var(--text);
+}
+
+.empty {
+  color: var(--muted-soft);
+  font-style: italic;
+}
+
+/* ---------- Demo panel (navy dev strip) ---------- */
+.demo-panel {
+  position: sticky;
+  bottom: 0;
+  margin-top: 20px;
+  background-image: linear-gradient(100deg, var(--header-from) 0%, var(--header-via) 100%);
+  color: #eaf1f8;
+  padding: 14px 20px;
+  border-top: 3px solid var(--brand-orange);
+}
+
+.demo-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.demo-head .muted {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.demo-buttons,
+.demo-resize {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.demo-resize {
+  margin-top: 8px;
+}
+
+.demo-resize .muted {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.demo-output {
+  display: block;
+  margin-top: 8px;
+  min-height: 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #7ee2a8;
+}
+
+.demo-output.is-error {
+  color: #ffb4ad;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 13px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+  color: #f3f8fc;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+}
+
+.btn-sm {
+  padding: 5px 11px;
+}
+
+.btn-danger {
+  /* orange-700 (#c2410c) for WCAG AA contrast (~4.6:1) with white text;
+     brand orange (#F36E21) is reserved for accents, not text-on-fill */
+  background: #c2410c;
+  border-color: #c2410c;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #9a3412;
+  border-color: #9a3412;
+}
+
+/* Primary button on light surfaces (launch page) */
+.btn-primary {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: #fff;
+  text-decoration: none;
+  display: inline-block;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background: var(--brand-primary-light);
+  border-color: var(--brand-primary-light);
+}
+
+.btn-primary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* ---------- Launch placeholder page ---------- */
+.launch-body {
+  display: flex;
+  justify-content: center;
+  padding: 44px 20px;
+}
+
+.launch-card {
+  max-width: 680px;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--brand-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 28px;
+}
+
+.launch-card h1 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-strong);
+  margin: 10px 0 8px;
+}
+
+.launch-card .kv {
+  margin: 18px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  background: var(--inset-bg);
+}
+
+.steps {
+  color: var(--text);
+  padding-left: 20px;
+  line-height: 1.7;
+}
+
+.steps code {
+  font-size: 12px;
+}
+
+/* ---------- Scrollbar (light, slate — mirrors app base scrollbar) ---------- */
+html {
+  scrollbar-color: #9ca3af transparent; /* Firefox: thumb track */
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #9ca3af;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ---------- Patient Readiness panel (Step 10B; replaces attention chip strip) ----------
+   Bordered/elevated container that sits above the cards on Pre Check-In. Severity
+   treatments reuse the existing semantic tokens (--danger / --warning / --info) — no
+   new hex. Built by renderReadinessPanel() in app.js. */
+.badge-red {
+  background: var(--danger-bg);
+  color: var(--danger-fg);
+  border-color: var(--danger-border);
+}
+
+.readiness-panel {
+  /* Query container for the row layout below (narrow panel: stack). */
+  container: readiness / inline-size;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--platform-shadow-card);
+  padding: 8px 12px 10px;
+  margin: 0 0 12px;
+}
+
+.readiness-panel.is-attention {
+  border-color: var(--warning-border);
+  border-left-color: var(--warning-border);
+  background: var(--warning-bg);
+}
+
+.readiness-panel.is-ready {
+  border-left-color: var(--success-fg);
+}
+
+.readiness-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+
+.readiness-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-strong);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.readiness-title-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.readiness-severity-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.readiness-count {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.readiness-issues {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+}
+
+.readiness-issue {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.readiness-issue + .readiness-issue {
+  border-top: 1px solid var(--border);
+}
+
+.readiness-issue.is-informational .readiness-issue-title { font-weight: 500; }
+
+.readiness-issue-dot {
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.sev-high .readiness-issue-dot { background: var(--danger-fg); }
+.sev-medium .readiness-issue-dot { background: var(--warning-fg); }
+.sev-low .readiness-issue-dot { background: var(--info-fg); }
+
+.readiness-issue-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  /* One wrapping row: title and action button side by side, vertically
+     centred; the detail line (and the re-run confirm) always below. The
+     headline wrapper is display: contents so its title and button join
+     this row. */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 8px;
+}
+
+.readiness-issue-body > .readiness-issue-detail,
+.readiness-issue-body > .readiness-rerun-confirm {
+  flex: 1 1 100%;
+  order: 2;
+}
+
+.readiness-issue-body > .readiness-rerun-confirm {
+  order: 4;
+}
+
+.readiness-issue-headline {
+  display: contents;
+}
+
+.readiness-issue-headline > .readiness-issue-title {
+  flex: 1 1 200px;
+}
+
+.readiness-issue-title {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.3;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.readiness-issue-sev {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--status-neutral-border));
+  color: hsl(var(--status-neutral-fg));
+  background: hsl(var(--status-neutral-bg));
+}
+
+.sev-high .readiness-issue-sev { color: var(--danger-fg); background: var(--danger-bg); border-color: var(--danger-border); }
+.sev-medium .readiness-issue-sev { color: var(--warning-fg); background: var(--warning-bg); border-color: var(--warning-border); }
+.sev-low .readiness-issue-sev { color: var(--info-fg); background: var(--info-bg); border-color: var(--info-border); }
+
+.readiness-issue-detail {
+  margin-top: 1px;
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--muted);
+}
+
+.readiness-issue-action {
+  flex: 0 0 auto;
+  align-self: center;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius);
+  border: 1px solid var(--accent-line);
+  background: var(--surface);
+  color: var(--accent-text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* A centred 44px action button lowers its title line; the dot follows it
+   ((44 - 7) / 2 = 18.5px). */
+.readiness-issue:has(.readiness-issue-action) > .readiness-issue-dot {
+  margin-top: 18px;
+}
+
+/* Too narrow for title + button on one line (about a 340-400px panel): the
+   button goes on its own line under the text instead of wrapping. */
+@container readiness (max-width: 420px) {
+  .readiness-issue:has(.readiness-issue-action) > .readiness-issue-dot {
+    margin-top: 6px;
+  }
+
+  .readiness-issue-headline > .readiness-issue-title {
+    flex-basis: 100%;
+  }
+
+  .readiness-issue-action {
+    order: 3;
+    margin-top: 6px;
+  }
+}
+
+.readiness-issue-action:hover {
+  background: var(--card-head-bg);
+}
+
+/* Pending state while a mock action (e.g. insurance discovery) runs — disabled
+   and dimmed so it reads as in-progress and can't be double-clicked. */
+.readiness-issue-action:disabled,
+.readiness-issue-action.is-pending {
+  opacity: 0.65;
+  cursor: progress;
+}
+
+.readiness-ready {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--success-fg);
+}
+
+/* Step 19: Insurance card — richer Clearline layout ------------------------- */
+.ins-rich { display: flex; flex-direction: column; gap: 14px; }
+.ins-plan { border: 1px solid var(--border); border-radius: 10px; padding: 14px; background: var(--surface); }
+.ins-plan-head { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+.ins-shield { font-size: 16px; line-height: 1; margin-top: 1px; }
+.ins-head-names { flex: 1 1 auto; min-width: 0; }
+.ins-payer { font-size: 13px; font-weight: 700; color: var(--text-strong); }
+.ins-plan-name { font-size: 12px; color: var(--muted); margin-top: 1px; }
+.ins-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.ins-pill {
+  display: inline-flex; align-items: center; gap: 4px; border-radius: 999px;
+  padding: 2px 10px; font-size: 12px; font-weight: 600;
+  border: 1px solid transparent;
+}
+.ins-pill-active,
+.ins-pill-network {
+  background: var(--success-bg); color: var(--success-fg); border-color: var(--success-border);
+}
+.ins-pill-rank {
+  background: hsl(var(--status-neutral-bg)); color: hsl(var(--status-neutral-fg));
+  border-color: hsl(var(--status-neutral-border));
+}
+.ins-pill-plantype {
+  background: hsl(var(--category-sky-bg)); color: hsl(var(--category-sky-fg));
+  border-color: hsl(var(--category-sky-border));
+}
+.ins-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px 14px; margin-top: 12px;
+}
+.ins-kv-label {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--muted);
+}
+.ins-kv-value { font-size: 12.5px; font-weight: 600; color: var(--text); margin-top: 2px; overflow-wrap: anywhere; }
+.ins-benefits {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px 14px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border);
+}
+.ins-metric-amounts { font-size: 12px; font-weight: 600; color: var(--text); margin-top: 2px; }
+.ins-tags { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.ins-phone { font-size: 12px; color: var(--muted); }
+.ins-verified { font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+/* ---------------------------------------------------------------------------
+   ST-C4 §1 — readiness RECOMMENDATIONS (own section, below the problems).
+   Deliberately quieter than a problem row: no severity dot, no severity pill,
+   muted heading. A recommendation is a suggestion, and it must not read as a
+   defect — it never flips the verdict, so it must not look like something that
+   would. Reuses .readiness-issue-body / -headline / -title / -detail / -action
+   so a recommendation row and a problem row share their internal layout.
+   --------------------------------------------------------------------------- */
+.readiness-recommendations {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.readiness-recommendations-head {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+}
+
+.readiness-recommendation-list {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+}
+
+.readiness-recommendation {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.readiness-recommendation + .readiness-recommendation {
+  border-top: 1px solid var(--border);
+}
+
+.readiness-recommendation .readiness-issue-title { font-weight: 500; }
+
+/* ST-D1 ruling ⑤ — the inline 30-day re-run confirm. Friction, never a block:
+   "Run again" is always present, so this adds a gesture, not a wall. */
+.readiness-rerun-confirm {
+  margin-top: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--warning-fg);
+  background: var(--warning-bg);
+  border-radius: var(--radius-sm);
+}
+
+.readiness-rerun-msg {
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--warning-fg);
+}
+
+.readiness-rerun-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.readiness-rerun-go,
+.readiness-rerun-cancel {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.readiness-rerun-cancel {
+  border: 1px solid var(--brand-primary);
+  background: var(--surface);
+  color: var(--brand-primary);
+}
+
+/* Primary on light surfaces: solid navy, white text (platform default). */
+.readiness-rerun-go {
+  border: 1px solid var(--brand-primary);
+  background: var(--brand-primary);
+  color: #fff;
+}
+
+
+/* ---------- Medicaid Renewal tab (2026-10-21) ----------
+   Structure only. Column colours (header band, body tint, notice accent,
+   progress fill) are applied per patient via css() from MR_COLUMNS in app.js,
+   which carries the platform board's status tokens. Fluid: no fixed widths.
+   Style alignment (handoff "Style alignment", 2026-10-21): platform text
+   colours, Inter body / Manrope 600 headings (self-hosted under
+   /public/fonts: the embed CSP is default-src 'self', so Google Fonts cannot
+   load), 12px minimum text, 8px radius, the platform card shadow (shadow-sm =
+   --shadow-card), controls at least 44px tall. Scoped to this tab; the
+   sidecar-wide style pass is separate. */
+#tab-medicaid-renewal {
+  /* Aliases of the :root platform theme layer. */
+  --mr-text: hsl(var(--foreground));
+  --mr-muted: hsl(var(--muted-foreground));
+  --mr-navy: var(--brand-pack-primary);
+  --mr-neutral-bg: hsl(var(--status-neutral-bg));
+  --mr-neutral-fg: hsl(var(--status-neutral-fg));
+  --mr-neutral-border: hsl(var(--status-neutral-border));
+  --mr-special-bg: hsl(var(--status-special-bg));
+  --mr-special-fg: hsl(var(--status-special-fg));
+  --mr-special-border: hsl(var(--status-special-border));
+  --mr-overdue: hsl(var(--data-overdue));
+  --mr-money: hsl(var(--data-money));
+  font-family: "Inter", var(--font);
+  color: var(--mr-text);
+}
+
+#tab-medicaid-renewal .mr-head-title,
+#tab-medicaid-renewal .mr-name,
+#tab-medicaid-renewal .mr-message-title {
+  font-family: "Manrope", "Inter", var(--font);
+  font-weight: 600;
+}
+
+.mr-modal {
+  border: 1px solid var(--platform-card-border);
+  border-radius: var(--radius);
+  /* clip, not hidden: hidden would make the modal a scroll container and
+     stop the save bar sticking to the top of the view. */
+  overflow: clip;
+  background: var(--surface);
+  box-shadow: var(--platform-shadow-card);
+}
+
+.mr-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  color: #fff;
+}
+
+.mr-head.is-loading {
+  opacity: 0.6;
+}
+
+.mr-head-icon {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.mr-head-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.mr-body {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mr-caps {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mr-muted);
+}
+
+.mr-chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--mr-text);
+}
+
+/* Placement chip on the header band; its sky / lime fill is set per chip
+   from MR_PLACEMENT_CHIPS in app.js. */
+.mr-chip-onhead {
+  font-weight: 700;
+}
+
+/* Platform status tones (Badge variants neutral / special). Chips may wrap
+   to two lines on a narrow panel. */
+.mr-chip-neutral {
+  background: var(--mr-neutral-bg);
+  border-color: var(--mr-neutral-border);
+  color: var(--mr-neutral-fg);
+}
+
+.mr-chip-special {
+  background: var(--mr-special-bg);
+  border-color: var(--mr-special-border);
+  color: var(--mr-special-fg);
+}
+
+.mr-chip-success {
+  background: hsl(var(--status-success-bg));
+  border-color: hsl(var(--status-success-border));
+  color: hsl(var(--status-success-fg));
+}
+
+.mr-chip-info {
+  background: hsl(var(--status-info-bg));
+  border-color: hsl(var(--status-info-border));
+  color: hsl(var(--status-info-fg));
+}
+
+.mr-chip-destructive {
+  background: hsl(var(--status-destructive-bg));
+  border-color: hsl(var(--status-destructive-border));
+  color: hsl(var(--status-destructive-fg));
+}
+
+.mr-chip:not(.mr-chip-onhead) {
+  white-space: normal;
+}
+
+/* Data colours (style spec 2.7): overdue = the destructive text colour,
+   money = 203 48% 44% (4.5:1 on white; the FPL value is large bold text).
+   The spec's values; the platform data tokens are not in the reachable code. */
+.mr-tile-value.is-overdue {
+  color: var(--mr-overdue);
+}
+
+.mr-tile-value.is-money,
+.mr-kv .kv-value.is-money {
+  color: var(--mr-money);
+}
+
+.mr-warning {
+  /* White, not the red tint: it must stand out on every column's body tint,
+     including No Longer Eligible's red one. */
+  border: 1px solid var(--danger-fg);
+  border-left: 4px solid var(--danger-fg);
+  background: var(--surface);
+  color: var(--danger-fg);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mr-warning-title {
+  font-weight: 700;
+}
+
+.mr-who {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mr-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--mr-text);
+}
+
+.mr-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mr-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 8px;
+}
+
+.mr-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mr-tile .badge {
+  align-self: flex-start;
+}
+
+.mr-tile-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--mr-text);
+  word-break: break-word;
+}
+
+.mr-notice {
+  border-left: 4px solid;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ---- Case progress card (tracker addendum, 2026-10-26) ----
+   Display only. done = success, current = info, not started = neutral
+   (platform status tokens). Nodes 24px; the rail is a grid of equal columns,
+   so it shrinks with the panel and never scrolls sideways. */
+.mr-cp {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--platform-shadow-card);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mr-cp-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.mr-cp-summary {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mr-text);
+}
+
+.mr-cp-rail {
+  position: relative;
+  display: grid;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mr-cp-track {
+  position: absolute;
+  top: 11px;
+  height: 2px;
+  background: hsl(var(--status-neutral-border));
+}
+
+.mr-cp-fill {
+  height: 100%;
+  background: hsl(var(--status-success-fg));
+}
+
+.mr-cp-node {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.mr-cp-dot {
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  border: 2px solid;
+  background: #fff;
+}
+
+.mr-cp-dot.is-done {
+  background: hsl(var(--status-success-fg));
+  border-color: hsl(var(--status-success-fg));
+  color: #fff;
+}
+
+.mr-cp-dot.is-denied {
+  background: hsl(var(--status-destructive-fg));
+  border-color: hsl(var(--status-destructive-fg));
+  color: #fff;
+}
+
+.mr-cp-dot.is-current {
+  border-color: hsl(var(--status-info-fg));
+  color: hsl(var(--status-info-fg));
+  box-shadow: 0 0 0 3px hsl(var(--status-info-bg));
+}
+
+/* Grey ring at the muted text colour, so the ring itself clears 3:1. */
+.mr-cp-dot.is-todo {
+  border-color: var(--mr-muted);
+  color: var(--mr-muted);
+}
+
+.mr-cp-current {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mr-cp-current-head,
+.mr-cp-row-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+}
+
+.mr-cp-current-title,
+.mr-cp-row-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mr-text);
+}
+
+.mr-cp-desc {
+  margin: 0;
+  font-size: 12px;
+  color: var(--mr-muted);
+  line-height: 1.4;
+}
+
+.mr-cp-toggle {
+  min-height: 44px;
+  align-self: flex-start;
+  padding: 0 4px;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mr-navy);
+  cursor: pointer;
+}
+
+.mr-cp-toggle:hover {
+  text-decoration: underline;
+}
+
+.mr-cp-toggle:focus-visible {
+  outline: 2px solid var(--accent-line);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.mr-cp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mr-cp-list[hidden] {
+  display: none;
+}
+
+.mr-cp-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.mr-cp-row-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mr-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.mr-section-row {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 12px;
+  background: var(--inset-bg);
+  border: none;
+  border-radius: var(--radius);
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.mr-section-row[aria-expanded='true'] {
+  border-bottom: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.mr-section-row:focus-visible,
+.mr-input:focus-visible,
+.mr-btn:focus-visible {
+  outline: 2px solid var(--accent-line);
+  outline-offset: 2px;
+}
+
+.mr-section-chevron {
+  color: var(--mr-muted);
+  font-size: 12px;
+}
+
+.mr-section-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mr-section-body[hidden] {
+  display: none;
+}
+
+.mr-kv .kv-label,
+.mr-kv .kv-value {
+  font-size: 13px;
+}
+
+.mr-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mr-field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mr-muted);
+}
+
+.mr-input {
+  font: inherit;
+  font-size: 14px;
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--mr-text);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.mr-textarea {
+  resize: vertical;
+  line-height: 1.4;
+}
+
+.mr-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mr-btn {
+  min-height: 44px;
+  padding: 8px 16px;
+}
+
+.mr-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mr-btn-secondary {
+  background: #fff;
+  border-color: var(--mr-navy);
+  color: var(--mr-navy);
+  font-weight: 600;
+}
+
+.mr-btn-secondary:hover {
+  background: var(--inset-bg);
+  border-color: var(--mr-navy);
+}
+
+#tab-medicaid-renewal .btn-primary {
+  background: var(--mr-navy);
+  border-color: var(--mr-navy);
+  color: #fff;
+}
+
+.mr-field-error {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--danger-fg);
+}
+
+/* ---- Actionable addendum (2026-10-30) ----
+   The shared save bar: sticky at the top of the modal (or of the open
+   dialog) so the question and the outcome stay in view. Confirm = info,
+   saving = neutral, saved = success, error = destructive (status tokens). */
+.mr-savebar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 1px solid;
+  background: hsl(var(--status-info-bg));
+  border-color: hsl(var(--status-info-border));
+  color: var(--mr-text);
+}
+
+.mr-savebar.is-saving {
+  background: hsl(var(--status-neutral-bg));
+  border-color: hsl(var(--status-neutral-border));
+}
+
+.mr-savebar.is-saved {
+  background: hsl(var(--status-success-bg));
+  border-color: hsl(var(--status-success-border));
+}
+
+.mr-savebar.is-error {
+  background: hsl(var(--status-destructive-bg));
+  border-color: hsl(var(--status-destructive-border));
+  color: hsl(var(--status-destructive-fg));
+}
+
+.mr-savebar-text:focus {
+  outline: none;
+}
+
+.mr-savebar-detail {
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.mr-tile .mr-field,
+.mr-tile .mr-btn {
+  margin-top: 4px;
+}
+
+.mr-member-fix {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  color: var(--mr-text);
+}
+
+.mr-member-fix .mr-btn {
+  align-self: flex-start;
+}
+
+/* Rail nodes as buttons: the whole column is the target, 44px tall. */
+.mr-cp-node-btn {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.mr-cp-node-btn.is-shown .mr-cp-dot {
+  outline: 2px solid var(--mr-navy);
+  outline-offset: 2px;
+}
+
+.mr-cp-row-btn {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 6px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mr-cp-row-btn.is-shown {
+  border-color: var(--border);
+  background: var(--inset-bg);
+}
+
+.mr-cp-node-btn:focus-visible,
+.mr-cp-row-btn:focus-visible,
+.mr-step-panel:focus-visible,
+.mr-tick-box:focus-visible,
+.mr-fr-link:focus-visible {
+  outline: 2px solid var(--accent-line);
+  outline-offset: 2px;
+}
+
+.mr-step-panel {
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  gap: 10px;
+}
+
+h3.mr-cp-current-title {
+  margin: 0;
+}
+
+.mr-step-done,
+.mr-step-locked {
+  margin: 0;
+  font-size: 13px;
+  color: var(--mr-muted);
+}
+
+.mr-ticks {
+  display: flex;
+  flex-direction: column;
+}
+
+/* A tick: native checkbox (or radio) in a 44px label. */
+.mr-tick {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 13px;
+  color: var(--mr-text);
+  cursor: pointer;
+}
+
+.mr-tick.is-readonly {
+  cursor: default;
+}
+
+.mr-tick-box {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  margin: 0;
+  accent-color: var(--mr-navy);
+}
+
+.mr-radios {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mr-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mr-filter {
+  padding: 8px 12px;
+}
+
+.mr-filter.is-on {
+  background: var(--mr-navy);
+  color: #fff;
+}
+
+.mr-add-doc {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mr-add-doc .mr-btn {
+  align-self: flex-start;
+}
+
+.mr-pdf-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.mr-fr {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.mr-fr-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+/* Step 1 dialogs: over the tab, inside the sidecar. */
+.mr-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgb(15 23 42 / 0.45);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px 12px;
+  overflow-y: auto;
+}
+
+.mr-dialog {
+  width: 100%;
+  max-width: 480px;
+  box-sizing: border-box;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--platform-shadow-card);
+  padding: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.mr-dialog > .mr-savebar {
+  margin: 0 -16px;
+}
+
+.mr-dialog-title {
+  margin: 16px 0 0;
+  font-family: "Manrope", "Inter", var(--font);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--mr-text);
+}
+
+.mr-why-lead {
+  margin: 0;
+  font-size: 13px;
+  color: var(--mr-text);
+  line-height: 1.4;
+}
+
+/* The product's "Email · SMS · portal" subtitle under Patient communication. */
+.mr-comms-sub {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mr-muted);
+}
+
+.mr-log-head {
+  margin-top: 4px;
+}
+
+.mr-log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mr-log-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 13px;
+}
+
+.mr-log-main {
+  font-weight: 600;
+  color: var(--mr-text);
+}
+
+.mr-log-sub,
+.mr-muted {
+  font-size: 12px;
+  color: var(--mr-muted);
+  margin: 0;
+}
+
+.mr-footnote {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--mr-muted);
+  margin: 0;
+}
+
+.mr-message {
+  text-align: center;
+  padding: 40px 20px;
+  background: var(--surface);
+  border: 1px solid var(--platform-card-border);
+  border-radius: var(--radius);
+  box-shadow: var(--platform-shadow-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.mr-message-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--mr-text);
+}
+
+.mr-message-body {
+  margin: 0;
+  font-size: 13px;
+  color: var(--mr-muted);
+}
+
+.mr-sample-banner {
+  /* Neutral tone (style spec 3: demo disclaimers in neutral or caution); the
+     caution pair is 3.96:1, under AA for 12px text. */
+  margin-bottom: 10px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--mr-neutral-bg);
+  border: 1px solid var(--mr-neutral-border);
+  color: var(--mr-neutral-fg);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.mr-skel {
+  background: linear-gradient(90deg, var(--border) 0%, var(--inset-bg) 50%, var(--border) 100%);
+  background-size: 200% 100%;
+  border-radius: var(--radius-sm);
+  animation: mr-skel 1.4s ease-in-out infinite;
+}
+
+.mr-skel-line { height: 18px; width: 45%; }
+.mr-skel-tile { height: 58px; }
+.mr-skel-strip { height: 36px; }
+.mr-skel-row { height: 44px; }
+
+@keyframes mr-skel {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mr-skel { animation: none; }
+}
+
+/* The muted grey falls just under AA (4.46:1) on the red No Longer Eligible
+   tint, so text placed directly on a column tint uses the body colour. */
+.mr-body > .mr-footnote {
+  color: var(--mr-text);
+}
+
+/* ---------- Financial Clearance (handoff 2026-10-30) ----------
+   Pre Check-In card; expanding it shows the clearance in place (no
+   pop-up). The bar and Run button follow the Demographics modal's action
+   bar and "Demographic Verification" button (inset bar, solid navy
+   8px-radius 13px/600 button, 44px targets); everything uses the sidecar
+   tokens. */
+
+/* Status-bearing title chip: the platform status tones. */
+.card-grid > .card.is-collapsible > h2 .card-key-status[data-tone="success"] {
+  background: var(--success-bg);
+  color: var(--success-fg);
+  border-color: var(--success-border);
+  font-weight: 600;
+}
+
+.card-grid > .card.is-collapsible > h2 .card-key-status[data-tone="caution"] {
+  background: hsl(var(--status-caution-bg));
+  color: #9a3412; /* orange-800, as .badge-caution (AA at 12px) */
+  border-color: hsl(var(--status-caution-border));
+  font-weight: 600;
+}
+
+.card-grid > .card.is-collapsible > h2 .card-key-status[data-tone="destructive"] {
+  background: var(--danger-bg);
+  color: var(--danger-fg);
+  border-color: var(--danger-border);
+  font-weight: 600;
+}
+
+.fc-btn {
+  min-height: 44px;
+  padding: 8px 18px;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fc-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.fc-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.fc-btn-primary {
+  background: var(--brand-primary);
+  color: #fff;
+  border: 1px solid var(--brand-primary);
+}
+
+.fc-btn-primary:hover:not(:disabled) {
+  background: var(--brand-accent);
+  border-color: var(--brand-accent);
+}
+
+.fc-btn-outline {
+  background: #fff;
+  color: var(--brand-primary);
+  border: 1px solid var(--brand-primary);
+}
+
+.fc-btn-outline:hover:not(:disabled) {
+  background: var(--inset-bg);
+}
+
+.fc-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: var(--inset-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.fc-last-run {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.fc-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  flex-wrap: wrap;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius);
+  background: var(--danger-bg);
+  color: var(--danger-fg);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.fc-message {
+  margin: 0;
+  font-size: 13px;
+}
+
+.fc-section {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.fc-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--card-head-bg);
+}
+
+.fc-section-head > .badge {
+  flex: none;
+  white-space: nowrap;
+}
+
+.fc-caps {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.fc-identity {
+  margin: 0;
+  padding: 8px 14px 0;
+  font-size: 12px;
+}
+
+.fc-rows {
+  margin: 0;
+  padding: 4px 14px 8px;
+}
+
+.fc-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 40%) 1fr;
+  gap: 4px 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.fc-row:last-child {
+  border-bottom: 0;
+}
+
+.fc-row-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.fc-row-value {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-strong);
+}
+
+.fc-row-value > .badge {
+  align-self: flex-start;
+}
+
+.fc-row-sub,
+.fc-not-recorded {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Narrow panel (the sidecar is user-resizable; checked at 340px). */
+@media (max-width: 420px) {
+  .fc-row {
+    grid-template-columns: 1fr;
+  }
+
+  .fc-bar .fc-run-btn {
+    width: 100%;
+  }
+}

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FrontRunner — Patient Profile (NextGen)</title>
+  <link rel="icon" type="image/png" href="/public/app-icon.png" />
+  <link rel="stylesheet" href="/public/css/styles.css" />
+</head>
+<body class="app-body">
+  <main class="app-main" role="main">
+    <!-- Waiting for patient context -->
+    <section id="state-waiting" class="state-panel" aria-live="polite">
+      <div class="state-icon" aria-hidden="true">⏳</div>
+      <h1>Waiting for patient context</h1>
+      <p class="muted">
+        This app is waiting for NextGen to provide a patient. Open it from within a
+        patient's chart in NextGen, and the matching FrontRunner profile will load
+        automatically.
+      </p>
+    </section>
+
+    <!-- Loading -->
+    <section id="state-loading" class="state-panel" aria-live="polite" hidden>
+      <div class="spinner" aria-hidden="true"></div>
+      <h1>Loading patient profile…</h1>
+      <p class="muted">Fetching profile for patient <code id="loading-patient-id">—</code></p>
+    </section>
+
+    <!-- Error -->
+    <section id="state-error" class="state-panel state-error" aria-live="assertive" hidden>
+      <div class="state-icon" aria-hidden="true">⚠️</div>
+      <h1>Unable to load patient</h1>
+      <p id="error-message" class="muted">Something went wrong.</p>
+    </section>
+
+    <!-- Profile -->
+    <section id="state-profile" class="profile" hidden>
+      <div class="profile-identity">
+        <div class="identity-text">
+          <div class="identity-line">
+            <h1 id="p-name">—</h1>
+            <span id="p-status" class="badge badge-green">—</span>
+          </div>
+          <div class="identity-meta">
+            <span>MRN <strong id="p-mrn">—</strong></span>
+            <span>Enterprise <strong id="p-enterprise">—</strong></span>
+            <span>Practice <strong id="p-practice">—</strong></span>
+            <span>Encounter <strong id="p-encounter">—</strong></span>
+          </div>
+        </div>
+        <button type="button" id="post-data-btn" class="btn">Post Data</button>
+        <button type="button" id="rtv-btn" class="btn">Real-Time Verification</button>
+      </div>
+
+      <!-- Tab 1: Pre Check-In (default). The tab bar is built and inserted
+           immediately before this panel by app.js (wireTabs). -->
+      <div id="tab-precheckin" class="tab-panel">
+        <!-- Patient Readiness panel (Step 10B): renders the buildReadiness() rollup
+             (verdict, open-issue count, severity-ranked issues) and replaces the old
+             attention chip strip. Built in app.js (renderReadinessPanel); structural
+             styles live in styles.css (.readiness-*), so the embed's CSP is respected.
+             Hidden until a patient context is loaded. -->
+        <div id="readiness-panel" role="region" aria-label="Patient Readiness" hidden></div>
+
+        <div class="card-grid">
+        <section class="card" id="demographics-card">
+          <h2>Demographics</h2>
+          <div class="kv">
+            <!-- Language / Gender identity / Preferred contact method rows
+                 REMOVED 2026-08-19 (Craig's demographics field-set review). -->
+            <div class="kv-row"><span class="kv-label">Preferred name</span><span class="kv-value" id="d-preferred">—</span></div>
+            <div class="kv-row"><span class="kv-label">Marital status</span><span class="kv-value" id="d-marital">—</span></div>
+            <div class="kv-row"><span class="kv-label">Race</span><span class="kv-value" id="d-race">—</span></div>
+            <div class="kv-row"><span class="kv-label">Ethnicity</span><span class="kv-value" id="d-ethnicity">—</span></div>
+            <div class="kv-row"><span class="kv-label">SSN</span><span class="kv-value" id="d-ssn">—</span></div>
+            <!-- Employer ADDED 2026-08-19 (Craig's demographics field-set
+                 review): insurance-discovery input. -->
+            <div class="kv-row"><span class="kv-label">Employer</span><span class="kv-value" id="d-employer">—</span></div>
+          </div>
+          <button type="button" id="contact-toggle" aria-expanded="false" aria-controls="contact-collapse">Show contact info &#9660;</button>
+          <div id="contact-collapse" class="kv" hidden>
+            <div class="kv-row"><span class="kv-label">Mobile</span><span class="kv-value" id="c-mobile">—</span></div>
+            <div class="kv-row"><span class="kv-label">Home</span><span class="kv-value" id="c-home">—</span></div>
+            <div class="kv-row"><span class="kv-label">Email</span><span class="kv-value" id="c-email">—</span></div>
+            <div class="kv-row kv-wide"><span class="kv-label">Address</span><span class="kv-value" id="c-address">—</span></div>
+            <div class="kv-row kv-wide"><span class="kv-label">Emergency</span><span class="kv-value" id="c-emergency">—</span></div>
+          </div>
+        </section>
+
+        <section class="card" id="insurance-card">
+          <h2>Insurance</h2>
+          <div class="kv">
+            <div class="kv-row"><span class="kv-label">Primary payer</span><span class="kv-value" id="ins-primary-payer">—</span></div>
+            <div class="kv-row"><span class="kv-label">Plan</span><span class="kv-value" id="ins-primary-plan">—</span></div>
+            <div class="kv-row"><span class="kv-label">Member ID</span><span class="kv-value" id="ins-primary-member">—</span></div>
+            <div class="kv-row"><span class="kv-label">Group</span><span class="kv-value" id="ins-primary-group">—</span></div>
+            <div class="kv-row"><span class="kv-label">Copay</span><span class="kv-value" id="ins-primary-copay">—</span></div>
+            <div class="kv-row"><span class="kv-label">Status</span><span class="kv-value" id="ins-primary-status">—</span></div>
+            <div class="kv-divider"></div>
+            <div class="kv-row"><span class="kv-label">Secondary</span><span class="kv-value" id="ins-secondary-payer">—</span></div>
+            <div class="kv-row"><span class="kv-label">Plan</span><span class="kv-value" id="ins-secondary-plan">—</span></div>
+            <div class="kv-row"><span class="kv-label">Member ID</span><span class="kv-value" id="ins-secondary-member">—</span></div>
+          </div>
+        </section>
+
+        </div>
+      </div>
+
+      <!-- Tab 2: Appointment. Hidden by default; shown when the Appointment tab
+           is selected (wireTabs). -->
+      <div id="tab-appointment" class="tab-panel" hidden>
+        <div class="card-grid"></div>
+      </div>
+
+      <!-- Tab 4: Medicaid Renewal. Hidden by default; shown when the Medicaid
+           Renewal tab is selected (wireTabs). One modal for the open patient,
+           built in app.js (renderMedicaidRenewalTab) from
+           GET /api/medicaid-renewal/:patientId. Display-only except Patient
+           communication, whose send is stubbed. -->
+      <div id="tab-medicaid-renewal" class="tab-panel" hidden>
+        <div id="mr-root" role="region" aria-label="Medicaid Renewal"></div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Demo controls: visible only outside NextGen -->
+  <aside id="demo-panel" class="demo-panel" aria-label="Demo controls" hidden>
+    <div class="demo-head">
+      <span class="badge badge-amber">Demo mode</span>
+      <span class="muted">NextGen state switcher (demo only)</span>
+    </div>
+    <div class="demo-buttons">
+      <button type="button" class="btn" data-method="notifyPatientDataChange">notifyPatientDataChange</button>
+      <button type="button" class="btn" data-method="appMinimize">appMinimize</button>
+      <button type="button" class="btn" data-method="appReopen">appReopen</button>
+      <button type="button" class="btn" data-method="appEnterFullscreen">appEnterFullscreen</button>
+      <button type="button" class="btn" data-method="appExitFullscreen">appExitFullscreen</button>
+      <button type="button" class="btn" data-method="appPopout">appPopout</button>
+      <button type="button" class="btn" data-method="appPopin">appPopin</button>
+      <button type="button" class="btn" data-method="appShowBadge" data-arg="3">appShowBadge</button>
+      <button type="button" class="btn" data-method="appShowBadgePersistent" data-arg="!">appShowBadgePersistent</button>
+      <button type="button" class="btn" data-method="appClearBadge">appClearBadge</button>
+      <button type="button" class="btn btn-danger" data-method="appClose">appClose</button>
+    </div>
+    <div class="demo-resize">
+      <span class="muted">appResize:</span>
+      <button type="button" class="btn btn-sm" data-width="100">100</button>
+      <button type="button" class="btn btn-sm" data-width="200">200</button>
+      <button type="button" class="btn btn-sm" data-width="400">400</button>
+      <button type="button" class="btn btn-sm" data-width="600">600</button>
+      <button type="button" class="btn btn-sm" data-width="800">800</button>
+      <button type="button" class="btn btn-sm" data-width="1000">1000</button>
+    </div>
+    <output id="demo-output" class="demo-output"></output>
+  </aside>
+
+  <script src="/public/js/athenaMessaging.js"></script>
+  <script src="/public/js/app.js"></script>
+</body>
+</html>

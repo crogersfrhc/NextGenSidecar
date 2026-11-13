@@ -1,0 +1,9 @@
+{
+  "name": "nextgen-sidecar-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "NextGen Sidecar UX prototype (PatientRemedi launched from NextGen Enterprise). Mocked data; see SPEC.md.",
+  "scripts": { "start": "node server.js" },
+  "dependencies": { "express": "^4.19.2", "jose": "^5.9.6" }
+}
